@@ -79,31 +79,25 @@ public:
 
         ifstream newTake;
         newTake.open("D:\\Учёба\\Файлы общего доступа\\Tempo Se Ne Va.wav", ios::binary);
-<<<<<<< HEAD
-        int prev = -1, kol=0;
+        unsigned long prev = 0, kol = 0;
         unsigned short curr_value = 0, prev_value = 0;
-=======
-        h.bitsPerSample = h.bitsPerSample / coef;
-
-        int prev = 0, kol=0;
-        unsigned short curr_value;
->>>>>>> 701fa6ea1904330a37eb7e3f7a322996079125d4
         for (unsigned long curr = 0; curr < size_old / (h.bitsPerSample / 8); curr ++) {
             kol++;
             newTake.seekg(44 + curr* (h.bitsPerSample / 8));
             newTake.read((char*)&curr_value, sizeof(curr_value));
 
-            int newInd = curr * coef;
-            if (prev == -1) {
+            unsigned long newInd = curr * coef;
+            if (prev == 0 && curr == 0) {
                 newFile.write((char*)&curr_value, sizeof(curr_value));
-            }else if (newInd == prev) {
+            }
+            else if (newInd == prev + 1) {//koef == 1
+                newFile.write((char*)&curr_value, sizeof(curr_value));
+            }
+            else if (newInd == prev) {
                 float function_value;
                 function_value = prev_value + ((curr_value - prev_value) / (curr - prev)) * (curr * coef - prev);
                 newFile.seekp(44 + prev * (h.bitsPerSample / 8));
                 newFile.write((char*)&function_value, sizeof(function_value));
-            }
-            else if (newInd == prev + 1) {//koef == 1
-                newFile.write((char*)&curr_value, sizeof(curr_value));
             }
             else if (newInd > prev) {
 
