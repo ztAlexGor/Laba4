@@ -22,11 +22,18 @@ class WavHeader {
 public:
     void ReadHuy(string address) {
         ifstream take;
-        take.open("D:\\Учёба\\Файлы общего доступа\\test_1.wav");
-        take >> chunkId;
-        cout << chunkId;
+        take.open(address);
+        take.read(chunkId, 4);
+        cout << chunkId[0] << chunkId[1] << chunkId[2] << chunkId[3] << endl;
         take >> chunkSize;
-        cout << chunkSize;
+        cout << chunkSize << endl;
+        take.seekg(8);
+        take.read(format, 4);
+        cout << format[0] << format[1] << format[2] << format[3] << endl;
+        take.read(subchunk1Id, 4);
+        cout << subchunk1Id[0] << subchunk1Id[1] << subchunk1Id[2] << subchunk1Id[3] << endl;
+        take >> subchunk1Size;
+        cout << subchunk1Size;
     }
     
 };
@@ -34,5 +41,5 @@ public:
 
 int main() {
     WavHeader Test_1;
-    Test_1.ReadHuy("D:\\Учёба\\Файлы общего доступа\\test_1.wav");
+    Test_1.ReadHuy("D:\\Учёба\\Файлы общего доступа\\Tempo Se Ne Va.wav");
 }
