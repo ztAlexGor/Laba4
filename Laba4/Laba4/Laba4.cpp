@@ -6,6 +6,7 @@
 using namespace std;
 
 class WavHeader {
+public:
     char chunkId[4];
     unsigned long chunkSize;
     char format[4];
@@ -19,7 +20,7 @@ class WavHeader {
     unsigned short bitsPerSample;
     char subchunk2Id[4];
     unsigned long subchunk2Size;
-public:
+    unsigned short first_sample;
     void ReadHuy(string address) {
         ifstream take;
         take.open("D:\\Учёба\\Файлы общего доступа\\Tempo Se Ne Va.wav");
@@ -37,15 +38,36 @@ public:
         take.read((char*)&bitsPerSample, sizeof(bitsPerSample));
         take.read(subchunk2Id, sizeof(subchunk2Id));
         take.read((char*)&subchunk2Size, sizeof(subchunk2Size));
+    }
+    void ShowHeader() {
+        
+        cout << chunkId << endl << chunkSize << endl << format << endl << subchunk1Id << endl << subchunk1Size << endl << audioFormat << endl << numChannels << endl << sampleRate << endl << byteRate << endl << blockAlign << endl << bitsPerSample << endl << subchunk2Id << endl << subchunk2Size << endl;
 
-        cout << chunkId << endl << chunkSize << endl << format << endl << subchunk1Id << endl << subchunk1Size << endl << audioFormat << endl << numChannels << endl << sampleRate << endl << byteRate << endl << blockAlign <<  endl << bitsPerSample << endl << subchunk2Id << endl << subchunk2Size <<endl;
-
+        cout << subchunk2Size / bitsPerSample << endl;
     }
     
 };
+
+class NewWave {
+public:
+    WavHeader h;
+    NewWave(WavHeader k, float coef):h(k) {
+        h.subchunk2Size = h.subchunk2Size * coef;
+        h.chunkSize = h.subchunk2Size + 36;
+    }
+
+};
+
+
 
 
 int main() {
     WavHeader Test_1;
     Test_1.ReadHuy("D:\\Учёба\\Файлы общего доступа\\Tempo Se Ne Va.wav");
+    Test_1.ShowHeader();
+    float coef;
+    cout << "Enter coefficient of expanding: ";
+    cin >> coef;
+    NewWave Test_2(Test_1, coef);
+    (Test_2.h).ShowHeader();
 }
