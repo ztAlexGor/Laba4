@@ -54,8 +54,10 @@ public:
     unsigned long size_old;
     float coef;
     NewWave(WavHeader k, float coef):coef(coef), h(k), size_old(k.subchunk2Size){
-        h.subchunk2Size = h.subchunk2Size * coef;
-        h.chunkSize = h.subchunk2Size + 36;
+        if (coef >= 1) {
+            h.subchunk2Size = h.subchunk2Size * coef;
+            h.chunkSize = h.subchunk2Size + 36;
+        }
     }
     void Creating() {
 
@@ -77,8 +79,15 @@ public:
 
         ifstream newTake;
         newTake.open("D:\\Учёба\\Файлы общего доступа\\Tempo Se Ne Va.wav", ios::binary);
+<<<<<<< HEAD
         int prev = -1, kol=0;
         unsigned short curr_value = 0, prev_value = 0;
+=======
+        h.bitsPerSample = h.bitsPerSample / coef;
+
+        int prev = 0, kol=0;
+        unsigned short curr_value;
+>>>>>>> 701fa6ea1904330a37eb7e3f7a322996079125d4
         for (unsigned long curr = 0; curr < size_old / (h.bitsPerSample / 8); curr ++) {
             kol++;
             newTake.seekg(44 + curr* (h.bitsPerSample / 8));
