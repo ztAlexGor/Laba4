@@ -23,7 +23,6 @@ public:
     void ReadHuy(string address) {
         ifstream take;
         take.open("D:\\Учёба\\Файлы общего доступа\\Tempo Se Ne Va.wav");
-
         take.read(chunkId, sizeof(chunkId));
         take.read((char*)&chunkSize, sizeof(chunkSize));
         take.read(format, sizeof(format));
@@ -37,14 +36,19 @@ public:
         take.read((char*)&bitsPerSample, sizeof(bitsPerSample));
         take.read(subchunk2Id, sizeof(subchunk2Id));
         take.read((char*)&subchunk2Size, sizeof(subchunk2Size));
-
+        int index = 43;
+        while (!(subchunk2Id[0] == 'd' && subchunk2Id[1] == 'a' && subchunk2Id[2] == 't' && subchunk2Id[3] == 'a')) {
+            index += subchunk2Size;
+            take.seekg(index);
+            take.read(subchunk2Id, sizeof(subchunk2Id));
+            take.read((char*)&subchunk2Size, sizeof(subchunk2Size));
+        }
         cout << chunkId << endl << chunkSize << endl << format << endl << subchunk1Id << endl << subchunk1Size << endl << audioFormat << endl << numChannels << endl << sampleRate << endl << byteRate << endl << blockAlign <<  endl << bitsPerSample << endl << subchunk2Id << endl << subchunk2Size <<endl;
 
     }
-    
 };
 
-
+    
 int main() {
     WavHeader Test_1;
     Test_1.ReadHuy("D:\\Учёба\\Файлы общего доступа\\Tempo Se Ne Va.wav");
