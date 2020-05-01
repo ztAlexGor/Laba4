@@ -42,10 +42,8 @@ public:
         take.close();
     }
     void ShowHeader() {
-        
         cout << chunkId << endl << chunkSize << endl << format << endl << subchunk1Id << endl << subchunk1Size << endl << audioFormat << endl << numChannels << endl << sampleRate << endl << byteRate << endl << blockAlign << endl << bitsPerSample << endl << subchunk2Id << endl << subchunk2Size << endl;
-
-        cout << subchunk2Size / bitsPerSample << endl;
+        //out << subchunk2Size / bitsPerSample << endl;
     }
     
 };
@@ -91,11 +89,11 @@ public:
                 newFile.write((char*)&curr_value, sizeof(curr_value));
             }else if (newInd == prev) {
                 float function_value;
-                function_value = prev_value + (curr_value - prev_value) / (curr - prev) * (curr * coef - prev);
+                function_value = prev_value + ((curr_value - prev_value) / (curr - prev)) * (curr * coef - prev);
                 newFile.seekp(44 + prev * (h.bitsPerSample / 8));
                 newFile.write((char*)&function_value, sizeof(function_value));
             }
-            else if (newInd == prev + 1) {
+            else if (newInd == prev + 1) {//koef == 1
                 newFile.write((char*)&curr_value, sizeof(curr_value));
             }
             else if (newInd > prev) {
