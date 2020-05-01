@@ -23,7 +23,7 @@ public:
     unsigned short first_sample;
     void ReadHuy(string address) {
         ifstream take;
-        take.open("D:\\Учёба\\Файлы общего доступа\\Tempo Se Ne Va_2.wav", ios::binary);
+        take.open("D:\\Учёба\\Файлы общего доступа\\Tempo Se Ne Va.wav", ios::binary);
 
         take.read(chunkId, sizeof(chunkId));
         take.read((char*)&chunkSize, sizeof(chunkSize));
@@ -56,13 +56,15 @@ public:
     unsigned long size_old;
     float coef;
     NewWave(WavHeader k, float coef):coef(coef), h(k), size_old(k.subchunk2Size){
-        h.subchunk2Size = h.subchunk2Size * coef;
-        h.chunkSize = h.subchunk2Size + 36;
+        if (coef >= 1) {
+            h.subchunk2Size = h.subchunk2Size * coef;
+            h.chunkSize = h.subchunk2Size + 36;
+        }
     }
     void Creating() {
 
         ofstream newFile;
-        newFile.open("D:\\Учёба\\Файлы общего доступа\\Tempo Se Ne Va_3.wav", ios::binary);
+        newFile.open("D:\\Учёба\\Файлы общего доступа\\Tempo Se Ne Va_2.wav", ios::binary);
         newFile.write(h.chunkId, sizeof(h.chunkId));
         newFile.write((char*)&h.chunkSize, sizeof(h.chunkSize));
         newFile.write(h.format, sizeof(h.format));
@@ -78,7 +80,8 @@ public:
         newFile.write((char*)&h.subchunk2Size, sizeof(h.subchunk2Size));
 
         ifstream newTake;
-        newTake.open("D:\\Учёба\\Файлы общего доступа\\Tempo Se Ne Va_2.wav", ios::binary);
+        newTake.open("D:\\Учёба\\Файлы общего доступа\\Tempo Se Ne Va.wav", ios::binary);
+        h.bitsPerSample = h.bitsPerSample / coef;
 
         int prev = 0, kol=0;
         unsigned short curr_value;
@@ -111,7 +114,7 @@ public:
 
 int main() {
     WavHeader Test_1;
-    Test_1.ReadHuy("D:\\Учёба\\Файлы общего доступа\\Tempo Se Ne Va_2.wav");
+    Test_1.ReadHuy("D:\\Учёба\\Файлы общего доступа\\Tempo Se Ne Va.wav");
     Test_1.ShowHeader();
     float coef;
     cout << "Enter coefficient of expanding: ";
