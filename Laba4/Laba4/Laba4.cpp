@@ -22,18 +22,24 @@ class WavHeader {
 public:
     void ReadHuy(string address) {
         ifstream take;
-        take.open(address);
-        take.read(chunkId, 4);
-        cout << chunkId[0] << chunkId[1] << chunkId[2] << chunkId[3] << endl;
-        take >> chunkSize;
-        cout << chunkSize << endl;
-        take.seekg(8);
-        take.read(format, 4);
-        cout << format[0] << format[1] << format[2] << format[3] << endl;
-        take.read(subchunk1Id, 4);
-        cout << subchunk1Id[0] << subchunk1Id[1] << subchunk1Id[2] << subchunk1Id[3] << endl;
-        take >> subchunk1Size;
-        cout << subchunk1Size;
+        take.open("D:\\Учёба\\Файлы общего доступа\\Tempo Se Ne Va.wav");
+
+        take.read(chunkId, sizeof(chunkId));
+        take.read((char*)&chunkSize, sizeof(chunkSize));
+        take.read(format, sizeof(format));
+        take.read(subchunk1Id, sizeof(subchunk1Id));
+        take.read((char*)&subchunk1Size, sizeof(subchunk1Size));
+        take.read((char*)&audioFormat, sizeof(audioFormat));
+        take.read((char*)&numChannels, sizeof(numChannels));
+        take.read((char*)&sampleRate, sizeof(sampleRate));
+        take.read((char*)&byteRate, sizeof(byteRate));
+        take.read((char*)&blockAlign, sizeof(blockAlign));
+        take.read((char*)&bitsPerSample, sizeof(bitsPerSample));
+        take.read(subchunk2Id, sizeof(subchunk2Id));
+        take.read((char*)&subchunk2Size, sizeof(subchunk2Size));
+
+        cout << chunkId << endl << chunkSize << endl << format << endl << subchunk1Id << endl << subchunk1Size << endl << audioFormat << endl << numChannels << endl << sampleRate << endl << byteRate << endl << blockAlign <<  endl << bitsPerSample << endl << subchunk2Id << endl << subchunk2Size <<endl;
+
     }
     
 };
