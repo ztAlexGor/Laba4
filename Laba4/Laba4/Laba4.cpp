@@ -23,7 +23,7 @@ public:
     unsigned short first_sample;
     void ReadHuy(string address) {
         ifstream take;
-        take.open("D:\\Учёба\\Файлы общего доступа\\Tempo Se Ne Va.wav", ios::binary);
+        take.open("D:\\Учёба\\Файлы общего доступа\\Tempo Se Ne Va_2.wav", ios::binary);
 
         take.read(chunkId, sizeof(chunkId));
         take.read((char*)&chunkSize, sizeof(chunkSize));
@@ -53,14 +53,16 @@ public:
 class NewWave {
 public:
     WavHeader h;
-    NewWave(WavHeader k, float coef):h(k) {
+    unsigned long size_old;
+    float coef;
+    NewWave(WavHeader k, float coef):coef(coef), h(k), size_old(k.subchunk2Size){
         h.subchunk2Size = h.subchunk2Size * coef;
         h.chunkSize = h.subchunk2Size + 36;
     }
     void Creating() {
 
         ofstream newFile;
-        newFile.open("D:\\Учёба\\Файлы общего доступа\\Tempo Se Ne Va_2.wav", ios::binary);
+        newFile.open("D:\\Учёба\\Файлы общего доступа\\Tempo Se Ne Va_3.wav", ios::binary);
         newFile.write(h.chunkId, sizeof(h.chunkId));
         newFile.write((char*)&h.chunkSize, sizeof(h.chunkSize));
         newFile.write(h.format, sizeof(h.format));
@@ -76,11 +78,32 @@ public:
         newFile.write((char*)&h.subchunk2Size, sizeof(h.subchunk2Size));
 
         ifstream newTake;
-        newTake.open("D:\\Учёба\\Файлы общего доступа\\Tempo Se Ne Va.wav", ios::binary);
-        newTake.seekg(44);
-        for (unsigned long i = 0; i < h.subchunk2Size / (h.bitsPerSample / 8)
-    }
+        newTake.open("D:\\Учёба\\Файлы общего доступа\\Tempo Se Ne Va_2.wav", ios::binary);
 
+        int prev = 0, kol=0;
+        unsigned short curr_value;
+        for (unsigned long curr = 0; curr < size_old / (h.bitsPerSample / 8); curr ++) {
+            kol++;
+            newTake.seekg(44 + curr* (h.bitsPerSample / 8));
+            int newInd = curr * coef;
+            if (newInd == prev) {
+
+            }
+            else if (newInd == prev + 1) {
+                newTake.read((char*)&curr_value, sizeof(curr_value));
+                newFile.write((char*)&curr_value, sizeof(curr_value));
+
+            }
+            else if (newInd > prev) {
+
+            }
+            prev = curr;
+        }
+        newTake.close();
+        newFile.close();
+
+        cout << endl << kol << endl;
+    }
 };
 
 
@@ -88,7 +111,7 @@ public:
 
 int main() {
     WavHeader Test_1;
-    Test_1.ReadHuy("D:\\Учёба\\Файлы общего доступа\\Tempo Se Ne Va.wav");
+    Test_1.ReadHuy("D:\\Учёба\\Файлы общего доступа\\Tempo Se Ne Va_2.wav");
     Test_1.ShowHeader();
     float coef;
     cout << "Enter coefficient of expanding: ";
