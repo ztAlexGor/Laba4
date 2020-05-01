@@ -23,7 +23,8 @@ public:
     unsigned short first_sample;
     void ReadHuy(string address) {
         ifstream take;
-        take.open("D:\\Учёба\\Файлы общего доступа\\Tempo Se Ne Va.wav");
+        take.open("D:\\Учёба\\Файлы общего доступа\\Tempo Se Ne Va.wav", ios::binary);
+
         take.read(chunkId, sizeof(chunkId));
         take.read((char*)&chunkSize, sizeof(chunkSize));
         take.read(format, sizeof(format));
@@ -37,13 +38,8 @@ public:
         take.read((char*)&bitsPerSample, sizeof(bitsPerSample));
         take.read(subchunk2Id, sizeof(subchunk2Id));
         take.read((char*)&subchunk2Size, sizeof(subchunk2Size));
-        int index = 43;
-        while (!(subchunk2Id[0] == 'd' && subchunk2Id[1] == 'a' && subchunk2Id[2] == 't' && subchunk2Id[3] == 'a')) {
-            index += subchunk2Size;
-            take.seekg(index);
-            take.read(subchunk2Id, sizeof(subchunk2Id));
-            take.read((char*)&subchunk2Size, sizeof(subchunk2Size));
-        }
+
+        take.close();
     }
     void ShowHeader() {
         
@@ -51,6 +47,7 @@ public:
 
         cout << subchunk2Size / bitsPerSample << endl;
     }
+    
 };
 
 class NewWave {
@@ -77,9 +74,17 @@ public:
         newFile.write((char*)&h.bitsPerSample, sizeof(h.bitsPerSample));
         newFile.write(h.subchunk2Id, sizeof(h.subchunk2Id));
         newFile.write((char*)&h.subchunk2Size, sizeof(h.subchunk2Size));
+
+        ifstream newTake;
+        newTake.open("D:\\Учёба\\Файлы общего доступа\\Tempo Se Ne Va.wav", ios::binary);
+        newTake.seekg(44);
+        for (unsigned long i = 0; i < h.subchunk2Size / (h.bitsPerSample / 8)
     }
 
 };
+
+
+
 
 int main() {
     WavHeader Test_1;
