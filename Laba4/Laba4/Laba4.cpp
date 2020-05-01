@@ -23,7 +23,7 @@ public:
     unsigned short first_sample;
     void ReadHuy(string address) {
         ifstream take;
-        take.open("D:\\Учёба\\Файлы общего доступа\\Baila Maria_big.wav", ios::binary);
+        take.open("D:\\Учёба\\Файлы общего доступа\\Baila Maria_-sm.wav", ios::binary);
 
         take.read(chunkId, sizeof(chunkId));
         take.read((char*)&chunkSize, sizeof(chunkSize));
@@ -62,7 +62,7 @@ public:
     void Creating() {
 
         ofstream newFile;
-        newFile.open("D:\\Учёба\\Файлы общего доступа\\Baila Maria_big2.wav", ios::binary);
+        newFile.open("D:\\Учёба\\Файлы общего доступа\\Baila Maria_-sm_2.wav", ios::binary);
         newFile.write(h.chunkId, sizeof(h.chunkId));
         newFile.write((char*)&h.chunkSize, sizeof(h.chunkSize));
         newFile.write(h.format, sizeof(h.format));
@@ -78,7 +78,7 @@ public:
         newFile.write((char*)&h.subchunk2Size, sizeof(h.subchunk2Size));
 
         ifstream newTake;
-        newTake.open("D:\\Учёба\\Файлы общего доступа\\Baila Maria_big.wav", ios::binary);
+        newTake.open("D:\\Учёба\\Файлы общего доступа\\Baila Maria_-sm.wav", ios::binary);
         unsigned long prev = -1, newInd;
         unsigned short curr_value = 0, prev_value = 0;
         for (unsigned long curr = 0; curr < size_old / (h.bitsPerSample / 8); curr ++) {
@@ -94,13 +94,14 @@ public:
                 //cout << -1 << endl;
             }
             else if (newInd > prev) {
-                int temp = prev;
-                int function_value;
+                unsigned long temp = prev+1;
+                unsigned short function_value;
                 newFile.seekp(44 + temp * (h.bitsPerSample / 8));
-                while(newInd != temp) {
-                    function_value = prev_value + ((curr_value - prev_value) / (newInd - prev)) * (temp - prev);
+                while(newInd >= temp) {
+                    function_value = (float)prev_value + ((float)((float)curr_value - (float)prev_value) / (float)((float)newInd - (float)prev)) * (float)((float)temp - (float)prev);
                     newFile.write((char*)&function_value, sizeof(function_value));
-                    temp++; 
+                    temp++;
+                    //cout << (prev_value + curr_value) / 2 - function_value << endl;;
                 }
                 //cout << function_value << endl;
             }
@@ -117,7 +118,7 @@ public:
 
 int main() {
     WavHeader Test_1;
-    Test_1.ReadHuy("D:\\Учёба\\Файлы общего доступа\\Baila Maria_big.wav");
+    Test_1.ReadHuy("D:\\Учёба\\Файлы общего доступа\\Baila Maria_-sm.wav");
     Test_1.ShowHeader();
     float coef;
     cout << "Enter coefficient of expanding: ";
