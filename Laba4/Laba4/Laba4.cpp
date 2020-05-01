@@ -23,7 +23,7 @@ public:
     unsigned short first_sample;
     void ReadHuy(string address) {
         ifstream take;
-        take.open("D:\\Учёба\\Файлы общего доступа\\test_3.wav", ios::binary);
+        take.open("D:\\Учёба\\Файлы общего доступа\\Baila Maria_big.wav", ios::binary);
 
         take.read(chunkId, sizeof(chunkId));
         take.read((char*)&chunkSize, sizeof(chunkSize));
@@ -60,7 +60,7 @@ public:
     void Creating() {
 
         ofstream newFile;
-        newFile.open("D:\\Учёба\\Файлы общего доступа\\test_3_2.wav", ios::binary);
+        newFile.open("D:\\Учёба\\Файлы общего доступа\\Baila Maria_big2.wav", ios::binary);
         newFile.write(h.chunkId, sizeof(h.chunkId));
         newFile.write((char*)&h.chunkSize, sizeof(h.chunkSize));
         newFile.write(h.format, sizeof(h.format));
@@ -95,14 +95,11 @@ public:
                     newFile.write((char*)&prev_value, sizeof(prev_value));
                 }
             }
-
             prev = newInd;
             prev_value = curr_value;
         }
         newTake.close();
         newFile.close();
-
-        cout << endl << "KOL " << kol << endl;
     }
     void Just_copy() {
         ofstream newFile;
@@ -141,7 +138,7 @@ public:
 
 int main() {
     WavHeader Test_1;
-    Test_1.ReadHuy("D:\\Учёба\\Файлы общего доступа\\test_3.wav");
+    Test_1.ReadHuy("D:\\Учёба\\Файлы общего доступа\\Baila Maria_big.wav");
     Test_1.ShowHeader();
     float coef;
     cout << "Enter coefficient of expanding: ";
