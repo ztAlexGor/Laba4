@@ -78,7 +78,7 @@ public:
         ifstream newTake;
         newTake.open("D:\\Учёба\\Файлы общего доступа\\Tempo Se Ne Va.wav", ios::binary);
         newTake.seekg(44);
-        for (unsigned long i = 0; i < h.subchunk2Size / (h.bitsPerSample / 8)
+     //   for (unsigned long i = 0; i < h.subchunk2Size / (h.bitsPerSample / 8)
     }
 
 };
