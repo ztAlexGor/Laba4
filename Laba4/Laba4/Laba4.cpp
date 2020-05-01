@@ -23,7 +23,7 @@ public:
     unsigned short first_sample;
     void ReadHuy(string address) {
         ifstream take;
-        take.open("D:\\Учёба\\Файлы общего доступа\\Tempo Se Ne Va.wav");
+        take.open("D:\\Учёба\\Файлы общего доступа\\Tempo Se Ne Va_2.wav", ios::binary);
 
         take.read(chunkId, sizeof(chunkId));
         take.read((char*)&chunkSize, sizeof(chunkSize));
@@ -55,6 +55,24 @@ public:
         h.subchunk2Size = h.subchunk2Size * coef;
         h.chunkSize = h.subchunk2Size + 36;
     }
+    void Creating() {
+
+        ofstream newFile;
+        newFile.open("D:\\Учёба\\Файлы общего доступа\\Tempo Se Ne Va_2.wav", ios::binary);
+        newFile.write(h.chunkId, sizeof(h.chunkId));
+        newFile.write((char*)&h.chunkSize, sizeof(h.chunkSize));
+        newFile.write(h.format, sizeof(h.format));
+        newFile.write(h.subchunk1Id, sizeof(h.subchunk1Id));
+        newFile.write((char*)&h.subchunk1Size, sizeof(h.subchunk1Size));
+        newFile.write((char*)&h.audioFormat, sizeof(h.audioFormat));
+        newFile.write((char*)&h.numChannels, sizeof(h.numChannels));
+        newFile.write((char*)&h.sampleRate, sizeof(h.sampleRate));
+        newFile.write((char*)&h.byteRate, sizeof(h.byteRate));
+        newFile.write((char*)&h.blockAlign, sizeof(h.blockAlign));
+        newFile.write((char*)&h.bitsPerSample, sizeof(h.bitsPerSample));
+        newFile.write(h.subchunk2Id, sizeof(h.subchunk2Id));
+        newFile.write((char*)&h.subchunk2Size, sizeof(h.subchunk2Size));
+    }
 
 };
 
@@ -70,4 +88,5 @@ int main() {
     cin >> coef;
     NewWave Test_2(Test_1, coef);
     (Test_2.h).ShowHeader();
+    Test_2.Creating();
 }
