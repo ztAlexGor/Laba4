@@ -84,8 +84,8 @@ public:
         unsigned long prev = 0, newInd;
         int16_t curr_value = 0, prev_value = 0;
 
-        int16_t buffInp[10000];
-        int size = 1000;
+        int16_t buffInp[100000];
+        int size = 70000;
 
         while (!newTake.eof()) {
             for (int i = 0; i < size; i++) {
@@ -106,26 +106,22 @@ public:
                 }
                 else if (newInd > prev) {
                     int temp = prev + 1;
-                    while (temp <= newInd) {
-                        int16_t function_value = prev_value + ((curr_value - prev_value) / (newInd - prev)) * (temp - prev);
+                    while (temp < newInd) {
+                        int add = prev_value + ((curr_value - prev_value) / (newInd - prev)) * (temp - prev);
+                        int16_t function_value = add;
                         buffOut[temp] = function_value;
                         temp++;
                     }
+                    buffOut[newInd] = curr_value;
                 }
                 prev = newInd;
                 prev_value = curr_value;
             }
 
-            int size_str = sizeOut * 2;
-            char* Str = new char[size_str];
-            for (int i = 0; i < sizeOut; i++) {
-                int16_t partL = buffOut[i] >> 8;
-                int16_t partR = buffOut[i] << 8;
-                partR = partR >> 8;
-                 Str[2 * i] = (char)partL;
-                Str[2*i+1] = (char)partR;
+            for (int curr = 0; curr < sizeOut; curr++) {
+                newFile.write((char*)&buffOut[curr], sizeof(buffOut[curr]));
             }
-            newFile.write(Str, sizeof(Str));
+
         }
         newTake.close();
         newFile.close();
