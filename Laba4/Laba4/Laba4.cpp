@@ -46,7 +46,7 @@ public:
     void ShowHeader() {
         cout << chunkId[0] << chunkId[1] << chunkId[2] << chunkId[3] << endl << chunkSize << endl << format[0] << format[1] << format[2] << format[3] << endl << subchunk1Id[0] << subchunk1Id[1] << subchunk1Id[2] << subchunk1Id[3] << endl << subchunk1Size << endl << audioFormat << endl << numChannels << endl << sampleRate << endl << byteRate << endl << blockAlign << endl << bitsPerSample << endl << subchunk2Id[0] << subchunk2Id[1] << subchunk2Id[2] << subchunk2Id[3] << endl << subchunk2Size << endl;
     }
-    WavHeader(string Name_of_file):Name_of_file(Name_of_file){}
+    WavHeader(string Name_of_file) :Name_of_file(Name_of_file) {}
 };
 
 class NewWave {
@@ -55,9 +55,9 @@ public:
     unsigned long size_old;
     float coef;
     string Name_of_file;
-    NewWave(WavHeader k, float coef):coef(coef), h(k), size_old(k.subchunk2Size), Name_of_file(k.Name_of_file){
-            h.subchunk2Size = h.subchunk2Size * coef;
-            h.chunkSize = h.subchunk2Size + 36;
+    NewWave(WavHeader k, float coef) :coef(coef), h(k), size_old(k.subchunk2Size), Name_of_file(k.Name_of_file) {
+        h.subchunk2Size = h.subchunk2Size * coef;
+        h.chunkSize = h.subchunk2Size + 36;
     }
     void Creating() {
         string NewFileName = Name_of_file + "_with coef";
@@ -83,12 +83,12 @@ public:
         newTake.open("D:\\Учёба\\Файлы общего доступа\\" + Name_of_file + ".wav", ios::binary);
         unsigned long prev = 0, newInd;
         unsigned short curr_value = 0, prev_value = 0;
-        for (unsigned long curr = 0; curr < size_old / (h.bitsPerSample / 8); curr ++) {
+        for (unsigned long curr = 0; curr < size_old / (h.bitsPerSample / 8); curr++) {
             newTake.read((char*)&curr_value, sizeof(curr_value));
 
             newInd = curr * coef;
             newFile.seekp(44 + newInd * (h.bitsPerSample / 8));
-            
+
             if (curr == 0) {
                 newFile.write((char*)&curr_value, sizeof(curr_value));
             }
@@ -96,7 +96,7 @@ public:
                 newFile.write((char*)&curr_value, sizeof(curr_value));
                 newFile.seekp(44 + (prev + 1) * (h.bitsPerSample / 8));
                 for (unsigned long i = prev + 1; i <= newInd; i++) {
-                    unsigned short function_value = floor(((float)prev_value +(float)curr_value)/2);
+                    unsigned short function_value = floor(((float)prev_value + (float)curr_value) / 2);
                     newFile.write((char*)&curr_value, sizeof(curr_value));
                 }
             }
@@ -127,7 +127,7 @@ public:
 
         ifstream newTake;
         newTake.open("D:\\Учёба\\Файлы общего доступа\\" + Name_of_file + ".wav", ios::binary);
-         
+
         unsigned short curr_value;
         for (unsigned long curr = 0; curr < size_old / (h.bitsPerSample / 8); curr++) {
             newTake.seekg(44 + curr * (h.bitsPerSample / 8));
