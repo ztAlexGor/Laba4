@@ -85,8 +85,7 @@ public:
         int16_t curr_value = 0, prev_value = 0;
 
         int16_t buffInp[100000];
-        int size = 70000;
-
+        int size = 100000-1;
         while (!newTake.eof()) {
             for (int i = 0; i < size; i++) {
                 if (newTake.eof()) {
@@ -95,7 +94,6 @@ public:
                 }
                 newTake.read((char*)&buffInp[i], sizeof(buffInp[i]));
             }
-
             int sizeOut = (int)((float)size * coef);
             int16_t* buffOut = new int16_t[sizeOut];
             for (int curr = 0; curr < size; curr++) {
@@ -106,9 +104,10 @@ public:
                 }
                 else if (newInd > prev) {
                     int temp = prev + 1;
-                    while (temp < newInd) {
-                        int add = prev_value + ((curr_value - prev_value) / (newInd - prev)) * (temp - prev);
-                        int16_t function_value = add;
+                    int16_t function_value;
+                    while (temp <= newInd) {
+                        long t = (long)((float)prev_value + (((float)curr_value - (float)prev_value) / ((float)newInd - (float)prev)) * ((float)temp - (float)prev));
+                        function_value = (int16_t)t;
                         buffOut[temp] = function_value;
                         temp++;
                     }
@@ -117,11 +116,9 @@ public:
                 prev = newInd;
                 prev_value = curr_value;
             }
-
-            for (int curr = 0; curr < sizeOut; curr++) {
-                newFile.write((char*)&buffOut[curr], sizeof(buffOut[curr]));
+            for (int i = 0; i < sizeOut; i++) {
+                newFile.write((char*)&buffOut[i], sizeof(buffOut[i]));
             }
-
         }
         newTake.close();
         newFile.close();
