@@ -8,6 +8,7 @@ using namespace std;
 
 class WavHeader {
 public:
+    string Name_of_file;
     char chunkId[4];
     unsigned long chunkSize;
     char format[4];
@@ -22,9 +23,9 @@ public:
     char subchunk2Id[4];
     unsigned long subchunk2Size;
     unsigned short first_sample;
-    void ReadHuy(string address) {
+    void ReadHuy() {
         ifstream take;
-        take.open("D:\\Учёба\\Файлы общего доступа\\Baila Maria_-sm.wav", ios::binary);
+        take.open("D:\\Учёба\\Файлы общего доступа\\" + Name_of_file + ".wav", ios::binary);
 
         take.read(chunkId, sizeof(chunkId));
         take.read((char*)&chunkSize, sizeof(chunkSize));
@@ -44,9 +45,8 @@ public:
     }
     void ShowHeader() {
         cout << chunkId[0] << chunkId[1] << chunkId[2] << chunkId[3] << endl << chunkSize << endl << format[0] << format[1] << format[2] << format[3] << endl << subchunk1Id[0] << subchunk1Id[1] << subchunk1Id[2] << subchunk1Id[3] << endl << subchunk1Size << endl << audioFormat << endl << numChannels << endl << sampleRate << endl << byteRate << endl << blockAlign << endl << bitsPerSample << endl << subchunk2Id[0] << subchunk2Id[1] << subchunk2Id[2] << subchunk2Id[3] << endl << subchunk2Size << endl;
-        //out << subchunk2Size / bitsPerSample << endl;
     }
-    
+    WavHeader(string Name_of_file):Name_of_file(Name_of_file){}
 };
 
 class NewWave {
@@ -54,15 +54,17 @@ public:
     WavHeader h;
     unsigned long size_old;
     float coef;
-    NewWave(WavHeader k, float coef):coef(coef), h(k), size_old(k.subchunk2Size){
+    string Name_of_file;
+    NewWave(WavHeader k, float coef):coef(coef), h(k), size_old(k.subchunk2Size), Name_of_file(k.Name_of_file){
             h.subchunk2Size = h.subchunk2Size * coef;
             h.chunkSize = h.subchunk2Size + 36;
     }
     void Creating() {
-        
+        string NewFileName = Name_of_file + "_with coef";
+        if (remove("D:\\Учёба\\Файлы общего доступа\\Baila Maria_-sm_with coef.wav") != 0)cout << "ERROR! file is not delete" << endl;
 
         ofstream newFile;
-        newFile.open("D:\\Учёба\\Файлы общего доступа\\Baila Maria_-sm_2.wav", ios::binary);
+        newFile.open("D:\\Учёба\\Файлы общего доступа\\" + NewFileName + ".wav", ios::binary);
         newFile.write(h.chunkId, sizeof(h.chunkId));
         newFile.write((char*)&h.chunkSize, sizeof(h.chunkSize));
         newFile.write(h.format, sizeof(h.format));
@@ -78,7 +80,7 @@ public:
         newFile.write((char*)&h.subchunk2Size, sizeof(h.subchunk2Size));
 
         ifstream newTake;
-        newTake.open("D:\\Учёба\\Файлы общего доступа\\Baila Maria_-sm.wav", ios::binary);
+        newTake.open("D:\\Учёба\\Файлы общего доступа\\" + Name_of_file + ".wav", ios::binary);
         unsigned long prev = 0, newInd;
         unsigned short curr_value = 0, prev_value = 0;
         for (unsigned long curr = 0; curr < size_old / (h.bitsPerSample / 8); curr ++) {
@@ -105,8 +107,10 @@ public:
         newFile.close();
     }
     void Just_copy() {
+        string NewFileName = Name_of_file + "_justCopy_with coef";
         ofstream newFile;
-        newFile.open("D:\\Учёба\\Файлы общего доступа\\Baila Maria_-sm_3.wav", ios::binary);
+
+        newFile.open("D:\\Учёба\\Файлы общего доступа\\" + NewFileName + ".wav", ios::binary);
         newFile.write(h.chunkId, sizeof(h.chunkId));
         newFile.write((char*)&h.chunkSize, sizeof(h.chunkSize));
         newFile.write(h.format, sizeof(h.format));
@@ -122,7 +126,7 @@ public:
         newFile.write((char*)&h.subchunk2Size, sizeof(h.subchunk2Size));
 
         ifstream newTake;
-        newTake.open("D:\\Учёба\\Файлы общего доступа\\Baila Maria_-sm.wav", ios::binary);
+        newTake.open("D:\\Учёба\\Файлы общего доступа\\" + Name_of_file + ".wav", ios::binary);
          
         unsigned short curr_value;
         for (unsigned long curr = 0; curr < size_old / (h.bitsPerSample / 8); curr++) {
@@ -140,15 +144,15 @@ public:
 
 
 int main() {
-    WavHeader Test_1;
-    if (remove("D:\\Учёба\\Файлы общего доступа\\Baila Maria_-sm_2.wav") != 0)cout << "err" << endl;
-    Test_1.ReadHuy("D:\\Учёба\\Файлы общего доступа\\Baila Maria_-sm.wav");
-    Test_1.ShowHeader();
+    string FileName = "Baila Maria_-sm";
+    WavHeader Test_1(FileName);
+    Test_1.ReadHuy();
+    //Test_1.ShowHeader();
     float coef;
     cout << "Enter coefficient of expanding: ";
     cin >> coef;
     NewWave Test_2(Test_1, coef);
-    (Test_2.h).ShowHeader();
+    //(Test_2.h).ShowHeader();
     //Test_2.Just_copy();
     Test_2.Creating();
 }
