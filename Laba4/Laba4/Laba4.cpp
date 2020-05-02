@@ -23,7 +23,7 @@ public:
     char subchunk2Id[4];
     unsigned long subchunk2Size;
     unsigned short first_sample;
-    void ReadHuy() {
+    void Read() {
         ifstream take;
         take.open("D:\\Учёба\\Файлы общего доступа\\" + Name_of_file + ".wav", ios::binary);
 
@@ -96,7 +96,7 @@ public:
                 newFile.write((char*)&curr_value, sizeof(curr_value));
                 newFile.seekp(44 + (prev + 1) * (h.bitsPerSample / 8));
                 for (unsigned long i = prev + 1; i <= newInd; i++) {
-                    unsigned short function_value = floor(((float)prev_value + (float)curr_value) / 2);
+                    unsigned short function_value = prev_value + ((curr_value - prev_value) / (newInd - prev)) * (i - prev);
                     newFile.write((char*)&curr_value, sizeof(curr_value));
                 }
             }
@@ -140,13 +140,10 @@ public:
     }
 };
 
-
-
-
 int main() {
     string FileName = "Baila Maria_-sm";
     WavHeader Test_1(FileName);
-    Test_1.ReadHuy();
+    Test_1.Read();
     //Test_1.ShowHeader();
     float coef;
     cout << "Enter coefficient of expanding: ";
@@ -156,9 +153,3 @@ int main() {
     //Test_2.Just_copy();
     Test_2.Creating();
 }
-
-
-/*
-                    function_value = (float)prev_value + ((float)((float)curr_value - (float)prev_value) / (float)((float)newInd - (float)prev)) * (float)((float)temp - (float)prev);
-                    newFile.write((char*)&function_value, sizeof(function_value));
-*/
