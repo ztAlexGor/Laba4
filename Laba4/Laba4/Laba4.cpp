@@ -119,6 +119,7 @@ public:
                         buffOut[temp] = function_value;
                         temp++;
                     }
+                    buffOut[newInd] = curr_value;
                 }
                 prev = newInd;
                 prev_value = curr_value;
