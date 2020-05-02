@@ -153,9 +153,3 @@ int main() {
     //Test_2.Just_copy();
     Test_2.Creating();
 }
-
-
-/*
-                    
-                    newFile.write((char*)&function_value, sizeof(function_value));
-*/
