@@ -2,6 +2,7 @@
 #include <iomanip>
 #include <cmath>
 #include <fstream>
+#include <cstdio> 
 
 using namespace std;
 
@@ -42,7 +43,7 @@ public:
         take.close();
     }
     void ShowHeader() {
-        cout << chunkId << endl << chunkSize << endl << format << endl << subchunk1Id << endl << subchunk1Size << endl << audioFormat << endl << numChannels << endl << sampleRate << endl << byteRate << endl << blockAlign << endl << bitsPerSample << endl << subchunk2Id << endl << subchunk2Size << endl;
+        cout << chunkId[0] << chunkId[1] << chunkId[2] << chunkId[3] << endl << chunkSize << endl << format[0] << format[1] << format[2] << format[3] << endl << subchunk1Id[0] << subchunk1Id[1] << subchunk1Id[2] << subchunk1Id[3] << endl << subchunk1Size << endl << audioFormat << endl << numChannels << endl << sampleRate << endl << byteRate << endl << blockAlign << endl << bitsPerSample << endl << subchunk2Id[0] << subchunk2Id[1] << subchunk2Id[2] << subchunk2Id[3] << endl << subchunk2Size << endl;
         //out << subchunk2Size / bitsPerSample << endl;
     }
     
@@ -54,12 +55,11 @@ public:
     unsigned long size_old;
     float coef;
     NewWave(WavHeader k, float coef):coef(coef), h(k), size_old(k.subchunk2Size){
-        if (coef >= 1) {
             h.subchunk2Size = h.subchunk2Size * coef;
             h.chunkSize = h.subchunk2Size + 36;
-        }
     }
     void Creating() {
+        
 
         ofstream newFile;
         newFile.open("D:\\Учёба\\Файлы общего доступа\\Baila Maria_-sm_2.wav", ios::binary);
@@ -79,37 +79,60 @@ public:
 
         ifstream newTake;
         newTake.open("D:\\Учёба\\Файлы общего доступа\\Baila Maria_-sm.wav", ios::binary);
-        unsigned long prev = -1, newInd;
+        unsigned long prev = 0, newInd;
         unsigned short curr_value = 0, prev_value = 0;
         for (unsigned long curr = 0; curr < size_old / (h.bitsPerSample / 8); curr ++) {
-            newTake.seekg(44 + curr* (h.bitsPerSample / 8));
             newTake.read((char*)&curr_value, sizeof(curr_value));
 
             newInd = curr * coef;
-            if (newInd == prev + 1) {//koef == 1
+            newFile.seekp(44 + newInd * (h.bitsPerSample / 8));
+            
+            if (curr == 0) {
                 newFile.write((char*)&curr_value, sizeof(curr_value));
-                //cout << 0 << endl;
-            }
-            else if (newInd == prev) {
-                //cout << -1 << endl;
             }
             else if (newInd > prev) {
-                unsigned long temp = prev+1;
-                unsigned short function_value;
-                newFile.seekp(44 + temp * (h.bitsPerSample / 8));
-                while(newInd >= temp) {
-                    function_value = (float)prev_value + ((float)((float)curr_value - (float)prev_value) / (float)((float)newInd - (float)prev)) * (float)((float)temp - (float)prev);
-                    newFile.write((char*)&function_value, sizeof(function_value));
-                    temp++;
-                    //cout << (prev_value + curr_value) / 2 - function_value << endl;;
+                newFile.write((char*)&curr_value, sizeof(curr_value));
+                newFile.seekp(44 + (prev + 1) * (h.bitsPerSample / 8));
+                for (unsigned long i = prev + 1; i <= newInd; i++) {
+                    unsigned short function_value = floor(((float)prev_value +(float)curr_value)/2);
+                    newFile.write((char*)&curr_value, sizeof(curr_value));
                 }
-                //cout << function_value << endl;
             }
             prev = newInd;
             prev_value = curr_value;
         }
         newTake.close();
         newFile.close();
+    }
+    void Just_copy() {
+        ofstream newFile;
+        newFile.open("D:\\Учёба\\Файлы общего доступа\\Baila Maria_-sm_3.wav", ios::binary);
+        newFile.write(h.chunkId, sizeof(h.chunkId));
+        newFile.write((char*)&h.chunkSize, sizeof(h.chunkSize));
+        newFile.write(h.format, sizeof(h.format));
+        newFile.write(h.subchunk1Id, sizeof(h.subchunk1Id));
+        newFile.write((char*)&h.subchunk1Size, sizeof(h.subchunk1Size));
+        newFile.write((char*)&h.audioFormat, sizeof(h.audioFormat));
+        newFile.write((char*)&h.numChannels, sizeof(h.numChannels));
+        newFile.write((char*)&h.sampleRate, sizeof(h.sampleRate));
+        newFile.write((char*)&h.byteRate, sizeof(h.byteRate));
+        newFile.write((char*)&h.blockAlign, sizeof(h.blockAlign));
+        newFile.write((char*)&h.bitsPerSample, sizeof(h.bitsPerSample));
+        newFile.write(h.subchunk2Id, sizeof(h.subchunk2Id));
+        newFile.write((char*)&h.subchunk2Size, sizeof(h.subchunk2Size));
+
+        ifstream newTake;
+        newTake.open("D:\\Учёба\\Файлы общего доступа\\Baila Maria_-sm.wav", ios::binary);
+         
+        unsigned short curr_value;
+        for (unsigned long curr = 0; curr < size_old / (h.bitsPerSample / 8); curr++) {
+            newTake.seekg(44 + curr * (h.bitsPerSample / 8));
+            newTake.read((char*)&curr_value, sizeof(curr_value));
+            for (int i = 0; i < coef; i++)
+                newFile.write((char*)&curr_value, sizeof(curr_value));
+        }
+        newFile.close();
+        newTake.close();
     }
 };
 
@@ -118,6 +141,7 @@ public:
 
 int main() {
     WavHeader Test_1;
+    if (remove("D:\\Учёба\\Файлы общего доступа\\Baila Maria_-sm_2.wav") != 0)cout << "err" << endl;
     Test_1.ReadHuy("D:\\Учёба\\Файлы общего доступа\\Baila Maria_-sm.wav");
     Test_1.ShowHeader();
     float coef;
@@ -125,5 +149,12 @@ int main() {
     cin >> coef;
     NewWave Test_2(Test_1, coef);
     (Test_2.h).ShowHeader();
+    //Test_2.Just_copy();
     Test_2.Creating();
 }
+
+
+/*
+                    function_value = (float)prev_value + ((float)((float)curr_value - (float)prev_value) / (float)((float)newInd - (float)prev)) * (float)((float)temp - (float)prev);
+                    newFile.write((char*)&function_value, sizeof(function_value));
+*/
