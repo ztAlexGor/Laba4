@@ -61,7 +61,7 @@ public:
     }
     void Creating() {
         string NewFileName = Name_of_file + "_with coef";
-        if (remove("D:\\Учёба\\Файлы общего доступа\\Baila Maria_-sm_with coef.wav") != 0)cout << "ERROR! file is not delete" << endl;
+        if (remove("D:\\Учёба\\Файлы общего доступа\\Baila Maria_big_with coef.wav") != 0)cout << "ERROR! file is not delete" << endl;
 
         ofstream newFile;
         newFile.open("D:\\Учёба\\Файлы общего доступа\\" + NewFileName + ".wav", ios::binary);
@@ -82,8 +82,7 @@ public:
         ifstream newTake;
         newTake.open("D:\\Учёба\\Файлы общего доступа\\" + Name_of_file + ".wav", ios::binary);
         unsigned long prev = 0, newInd;
-        int16_t curr_value = 0, prev_value = 0;
-
+        int16_t curr_value = 0, prev_value = -1;
         int16_t buffInp[100000];
         int size = 100000-1;
         while (!newTake.eof()) {
@@ -100,7 +99,16 @@ public:
                 curr_value = buffInp[curr];
                 newInd = curr * coef;
                 if (curr == 0) {
-                    buffOut[newInd] = curr_value;
+                    if (prev_value == -1 || coef < 1)buffOut[newInd] = curr_value;
+                    else {
+                        int sdvig = floor(coef);
+                        int16_t function_value;
+                        for (int i = 1; i < sdvig; i++) {
+                            long t = (long)((float)prev_value + ((float)curr_value - (float)prev_value) / ((float)(prev+sdvig) - (float)prev)) * ((float)(prev+i) - (float)prev);
+                            function_value = (int16_t)t;
+                            newFile.write((char*)&function_value, sizeof(function_value));
+                        }
+                    }
                 }
                 else if (newInd > prev) {
                     int temp = prev + 1;
@@ -115,7 +123,6 @@ public:
                 prev = newInd;
                 prev_value = curr_value;
             }
-
             for (int i = 0; i < sizeOut; i++) {
                 newFile.write((char*)&buffOut[i], sizeof(buffOut[i]));
             }
@@ -158,7 +165,7 @@ public:
 };
 
 int main() {
-    string FileName = "Baila Maria_-sm";
+    string FileName = "Baila Maria_big";
     WavHeader Test_1(FileName);
     Test_1.Read();
     //Test_1.ShowHeader();
