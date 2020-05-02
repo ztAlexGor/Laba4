@@ -82,7 +82,8 @@ public:
         ifstream newTake;
         newTake.open("D:\\Учёба\\Файлы общего доступа\\" + Name_of_file + ".wav", ios::binary);
         unsigned long prev = 0, newInd;
-        unsigned short curr_value = 0, prev_value = 0;
+        int16_t curr_value = 0, prev_value = 0;
+
         for (unsigned long curr = 0; curr < size_old / (h.bitsPerSample / 8); curr++) {
             newTake.read((char*)&curr_value, sizeof(curr_value));
 
@@ -96,8 +97,8 @@ public:
                 newFile.write((char*)&curr_value, sizeof(curr_value));
                 newFile.seekp(44 + (prev + 1) * (h.bitsPerSample / 8));
                 for (unsigned long i = prev + 1; i <= newInd; i++) {
-                    unsigned short function_value = prev_value + ((curr_value - prev_value) / (newInd - prev)) * (i - prev);
-                    newFile.write((char*)&curr_value, sizeof(curr_value));
+                    int16_t function_value = prev_value + ((curr_value - prev_value) / (newInd - prev)) * (i - prev);
+                    newFile.write((char*)&function_value, sizeof(function_value));
                 }
             }
             prev = newInd;
