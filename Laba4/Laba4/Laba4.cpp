@@ -23,7 +23,7 @@ public:
     unsigned short first_sample;
     void ReadHuy(string address) {
         ifstream take;
-        take.open("D:\\Учёба\\Файлы общего доступа\\Baila Maria_big.wav", ios::binary);
+        take.open("D:\\Учёба\\Файлы общего доступа\\Tempo Se Ne Va.wav", ios::binary);
 
         take.read(chunkId, sizeof(chunkId));
         take.read((char*)&chunkSize, sizeof(chunkSize));
@@ -60,7 +60,7 @@ public:
     void Creating() {
 
         ofstream newFile;
-        newFile.open("D:\\Учёба\\Файлы общего доступа\\Baila Maria_big2.wav", ios::binary);
+        newFile.open("D:\\Учёба\\Файлы общего доступа\\Tempo Se Ne Va_2.wav", ios::binary);
         newFile.write(h.chunkId, sizeof(h.chunkId));
         newFile.write((char*)&h.chunkSize, sizeof(h.chunkSize));
         newFile.write(h.format, sizeof(h.format));
@@ -76,7 +76,7 @@ public:
         newFile.write((char*)&h.subchunk2Size, sizeof(h.subchunk2Size));
 
         ifstream newTake;
-        newTake.open("D:\\Учёба\\Файлы общего доступа\\test_3.wav", ios::binary);
+        newTake.open("D:\\Учёба\\Файлы общего доступа\\Tempo Se Ne Va.wav", ios::binary);
         unsigned long newInd, prev = 0, kol = 0;
         unsigned short curr_value = 0, prev_value = 0;
         for (unsigned long curr = 0; curr < size_old / (h.bitsPerSample / 8); curr ++) {
@@ -103,7 +103,7 @@ public:
     }
     void Just_copy() {
         ofstream newFile;
-        newFile.open("D:\\Учёба\\Файлы общего доступа\\test_3_2.wav", ios::binary);
+        newFile.open("D:\\Учёба\\Файлы общего доступа\\Tempo Se Ne Va_2.wav", ios::binary);
         newFile.write(h.chunkId, sizeof(h.chunkId));
         newFile.write((char*)&h.chunkSize, sizeof(h.chunkSize));
         newFile.write(h.format, sizeof(h.format));
@@ -119,7 +119,7 @@ public:
         newFile.write((char*)&h.subchunk2Size, sizeof(h.subchunk2Size));
 
         ifstream newTake;
-        newTake.open("D:\\Учёба\\Файлы общего доступа\\test_3.wav", ios::binary);
+        newTake.open("D:\\Учёба\\Файлы общего доступа\\Tempo Se Ne Va.wav", ios::binary);
          
         unsigned short curr_value;
         for (unsigned long curr = 0; curr < size_old / (h.bitsPerSample / 8); curr++) {
