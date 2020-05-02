@@ -2,6 +2,7 @@
 #include <iomanip>
 #include <cmath>
 #include <fstream>
+#include <cstdio> 
 
 using namespace std;
 
@@ -58,6 +59,7 @@ public:
             h.chunkSize = h.subchunk2Size + 36;
     }
     void Creating() {
+        
 
         ofstream newFile;
         newFile.open("D:\\Учёба\\Файлы общего доступа\\Tempo Se Ne Va_2.wav", ios::binary);
@@ -85,14 +87,15 @@ public:
             newInd = curr * coef;
             newFile.seekp(44 + newInd * (h.bitsPerSample / 8));
             
-            if (prev == 0 && curr == 0) 
+            if (curr == 0) {
                 newFile.write((char*)&curr_value, sizeof(curr_value));
-            
+            }
             else if (newInd > prev) {
                 newFile.write((char*)&curr_value, sizeof(curr_value));
-                for (unsigned long i = prev + 1; i < newInd; i++) {
-                    newFile.seekp(44 + i * (h.bitsPerSample / 8));
-                    newFile.write((char*)&prev_value, sizeof(prev_value));
+                newFile.seekp(44 + (prev + 1) * (h.bitsPerSample / 8));
+                for (unsigned long i = prev + 1; i <= newInd; i++) {
+                    unsigned short function_value = floor(((float)prev_value +(float)curr_value)/2);
+                    newFile.write((char*)&curr_value, sizeof(curr_value));
                 }
             }
             prev = newInd;
@@ -138,13 +141,20 @@ public:
 
 int main() {
     WavHeader Test_1;
-    Test_1.ReadHuy("D:\\Учёба\\Файлы общего доступа\\Baila Maria_big.wav");
+    if (remove("D:\\Учёба\\Файлы общего доступа\\Baila Maria_-sm_2.wav") != 0)cout << "err" << endl;
+    Test_1.ReadHuy("D:\\Учёба\\Файлы общего доступа\\Baila Maria_-sm.wav");
     Test_1.ShowHeader();
     float coef;
     cout << "Enter coefficient of expanding: ";
     cin >> coef;
     NewWave Test_2(Test_1, coef);
     (Test_2.h).ShowHeader();
-    Test_2.Just_copy();
-    //Test_2.Creating();
+    //Test_2.Just_copy();
+    Test_2.Creating();
 }
+
+
+/*
+                    function_value = (float)prev_value + ((float)((float)curr_value - (float)prev_value) / (float)((float)newInd - (float)prev)) * (float)((float)temp - (float)prev);
+                    newFile.write((char*)&function_value, sizeof(function_value));
+*/
